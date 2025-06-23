@@ -13,14 +13,14 @@ city = st.text_input("Enter City Name", "Chennai")
 
 # Load ML model (make sure you have the trained .pkl file)
 try:
-    with open("weather_model.pkl", "rb") as f:
+    with open("model.pkl", "rb") as f:
         model = pickle.load(f)
 except FileNotFoundError:
     st.error("ML model file not found. Please train and save 'weather_model.pkl' first.")
     st.stop()
 
 # Define your API Key
-API_KEY = "YOUR_API_KEY"  # 🔴 Replace with your OpenWeatherMap API key
+API_KEY = "59ee022209c951f6e890fcb003601894"  # 🔴 Replace with your OpenWeatherMap API key
 
 def get_weather(city_name):
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={API_KEY}&units=metric"
