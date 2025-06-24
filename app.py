@@ -11,13 +11,13 @@ st.write("Enter your city to fetch current weather and predict temperature using
 # Input
 city = st.text_input("Enter City Name", "Chennai")
 
-# Load ML model (make sure you have the trained .pkl file)
-try:
-    with open("model.pkl", "rb") as f:
-        model = pickle.load(f)
-except FileNotFoundError:
-    st.error("ML model file not found. Please train and save 'weather_model.pkl' first.")
-    st.stop()
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+# Training...
+with open('model.pkl', 'wb') as f:
+    pickle.dump(model, f)
+
 
 # Define your API Key
 API_KEY = "59ee022209c951f6e890fcb003601894"  # 🔴 Replace with your OpenWeatherMap API key
