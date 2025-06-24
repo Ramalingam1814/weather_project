@@ -1,8 +1,8 @@
 import streamlit as st
 import requests
 import numpy as np
-from datetime import datetime
 import pickle
+from datetime import datetime
 
 # Title
 st.title("🌤️ Live Climate Prediction App")
@@ -11,16 +11,16 @@ st.write("Enter your city to fetch current weather and predict temperature using
 # Input
 city = st.text_input("Enter City Name", "Chennai")
 
-from sklearn.linear_model import LinearRegression
+# Load trained model (model.pkl must be present in same folder)
+try:
+    with open("model.pkl", "rb") as f:
+        model = pickle.load(f)
+except FileNotFoundError:
+    st.error("❌ Model file 'model.pkl' not found. Please upload it.")
+    st.stop()
 
-model = LinearRegression()
-# Training...
-with open('model.pkl', 'wb') as f:
-    pickle.dump(model, f)
-
-
-# Define your API Key
-API_KEY = "59ee022209c951f6e890fcb003601894"  # 🔴 Replace with your OpenWeatherMap API key
+# API Key - Replace this with your actual key
+API_KEY = "59ee022209c951f6e890fcb003601894"
 
 def get_weather(city_name):
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={API_KEY}&units=metric"
@@ -39,23 +39,25 @@ def get_weather(city_name):
     }
     return weather_data, None
 
-# Button to trigger prediction
+# Prediction Button
 if st.button("Get Climate Prediction"):
     weather, error = get_weather(city)
 
     if weather:
-        # Show live values
         st.subheader(f"🌐 Live Weather Data for {city}")
         st.write(f"Humidity: {weather['humidity']}%")
         st.write(f"Pressure: {weather['pressure']} hPa")
         st.write(f"Wind Speed: {weather['wind_speed']} m/s")
-        st.write(f"Hour: {weather['hour']}")
+        st.write(f"Hour of Day: {weather['hour']}")
 
-        # Predict temperature
-        features = np.array([[weather["humidity"], weather["pressure"], weather["wind_speed"], weather["hour"]]])
-        predicted_temp = model.predict(features)[0]
+        # Prepare input for model
+        input_features = np.array([[weather["humidity"], weather["pressure"], weather["wind_speed"], weather["hour"]]])
+        try:
+            predicted_temp = model.predict(input_features)[0]
+            st.success(f"🌡️ Predicted Temperature: {predicted_temp:.2f}°C")
+        except Exception as e:
+            st.error(f"Prediction error: {e}")
 
-        st.success(f"🌡️ Predicted Temperature: {predicted_temp:.2f}°C")
-        st.info(f"📡 Actual Temperature: {weather['temp']}°C")
+        st.info(f"📡 Actual Temperature Now: {weather['temp']}°C")
     else:
         st.error(f"Failed to fetch weather data: {error}")
