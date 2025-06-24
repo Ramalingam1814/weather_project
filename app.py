@@ -9,7 +9,7 @@ st.title("🌤️ Live Climate Prediction App")
 st.write("Enter your city to fetch current weather and predict temperature using ML model.")
 
 # Input
-city = st.text_input("Enter City Name", "Chennai")
+city = st.text_input("Enter City Name")
 
 # Load trained model (model.pkl must be present in same folder)
 try:
